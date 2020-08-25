@@ -96,6 +96,8 @@ public class PlayerController : MonoBehaviour
             }
 		}
 
+        // Forward
+
         if (Mathf.Abs(currThurst) > 0) {
             rb.AddForce(transform.forward * currThurst);
 		}

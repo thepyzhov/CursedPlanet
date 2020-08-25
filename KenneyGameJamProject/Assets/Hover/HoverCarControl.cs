@@ -113,6 +113,8 @@ public class HoverCarControl : MonoBehaviour
             Rigidbody rb = GetComponent<Rigidbody>();
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-        }
+        } else if (other.gameObject.CompareTag("DestinationPoint")) {
+            Debug.Log("Med-kit delivered!");
+		}
     }
 }
