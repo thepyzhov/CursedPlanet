@@ -4,37 +4,51 @@ using UnityEngine;
 
 public class MSInteractionArea : MonoBehaviour
 {
-    public int medGelAmount = 100;
+    public float refuelTime = 3f;
+    float elapsedTime = 0f;
+    bool hasFuel = true;
+
+    public Color emptyAreaColor = Color.white;
+    public Color fuelingColor = Color.yellow;
+    public Color fueldColor = Color.green;
 
     SpriteRenderer spriteRenderer;
-    Color baseColor;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        baseColor = spriteRenderer.color;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            spriteRenderer.color = Color.green;
+            if (hasFuel) {
+                spriteRenderer.color = fuelingColor;
+            }
         }
     }
 
-    private void OnTriggerExit(Collider other)
+	private void OnTriggerStay(Collider other) {
+		if (other.CompareTag("Player")) {
+            if (hasFuel) {
+                elapsedTime += Time.deltaTime;
+                if (elapsedTime > refuelTime) {
+                    hasFuel = false;
+                    spriteRenderer.color = fueldColor;
+                    SBInteractionArea.MSUnfueled();
+                }
+            }
+		}
+	}
+
+	private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            spriteRenderer.color = baseColor;
+            if (hasFuel) {
+                spriteRenderer.color = emptyAreaColor;
+                elapsedTime = 0f;
+            }
         }
     }
 }

@@ -4,17 +4,11 @@ using UnityEngine;
 
 public class SessionManager : MonoBehaviour
 {
-    int medGelAmount;
-
-	private void Awake() {
-		medGelAmount = 0;
+	public static void SBFueld() {
+		ActivePortal();
 	}
 
-	void GetMedGel() {
-
-	}
-
-	void SpendMedGel() {
-
+	static void ActivePortal() {
+		FindObjectOfType<PortalController>().ActivePortal();
 	}
 }
