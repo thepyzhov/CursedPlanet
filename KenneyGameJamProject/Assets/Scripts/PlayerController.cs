@@ -112,8 +112,4 @@ public class PlayerController : MonoBehaviour
 		mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, cameraPosition.position, Time.deltaTime * cameraSmooth);
         mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, cameraPosition.rotation, Time.deltaTime * cameraSmooth);
 	}
-
-	private void OnCollisionEnter(Collision collision) {
-        //Debug.Log("Collision detected: " + collision.gameObject.name);
-	}
 }

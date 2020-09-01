@@ -49,6 +49,8 @@ public class SBInteractionArea : MonoBehaviour
                     isFueled = true;
                     spriteRenderer.color = fueledColor;
                     SessionManager.SBFueld();
+
+                    FindObjectOfType<AudioManager>().Play("Complete");
                 }
             }
         }

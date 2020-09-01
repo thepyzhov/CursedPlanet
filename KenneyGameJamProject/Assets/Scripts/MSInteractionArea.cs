@@ -36,6 +36,8 @@ public class MSInteractionArea : MonoBehaviour
                     hasFuel = false;
                     spriteRenderer.color = fueldColor;
                     SBInteractionArea.MSUnfueled();
+
+                    FindObjectOfType<AudioManager>().Play("Complete");
                 }
             }
 		}

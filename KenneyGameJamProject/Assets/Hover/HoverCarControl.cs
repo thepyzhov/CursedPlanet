@@ -4,7 +4,7 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 public class HoverCarControl : MonoBehaviour
 {
-    Rigidbody m_body;
+    Rigidbody rb;
     float m_deadZone = 0.1f;
 
     public float m_hoverForce = 9.0f;
@@ -26,11 +26,15 @@ public class HoverCarControl : MonoBehaviour
     public LayerMask ignoreLayerMasks;
     //int m_layerMask;
 
+    AudioManager audioManager;
+
     void Start() {
-        m_body = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
 
         //m_layerMask = 1 << LayerMask.NameToLayer("Player");
         //m_layerMask = ~m_layerMask;
+
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     void OnDrawGizmos() {
@@ -68,6 +72,13 @@ public class HoverCarControl : MonoBehaviour
         if (Mathf.Abs(turnAxis) > m_deadZone) {
             m_currTurn = turnAxis;
         }
+
+		if ((aclAxis != 0) && !audioManager.IsPlaying("PlayerMovement")) {
+			audioManager.Play("PlayerMovement");
+		} else if (aclAxis == 0) {
+			audioManager.Stop("PlayerMovement");
+		}
+		//Debug.Log("Turn axis: " + turnAxis + "\nAcl axis: " + aclAxis);
     }
 
     void FixedUpdate() {
@@ -77,18 +88,18 @@ public class HoverCarControl : MonoBehaviour
         {
             var hoverPoint = m_hoverPoints [i];
             if (Physics.Raycast(hoverPoint.transform.position, -Vector3.up, out hit, m_hoverHeight, ignoreLayerMasks))
-            m_body.AddForceAtPosition(Vector3.up 
+            rb.AddForceAtPosition(Vector3.up 
                 * m_hoverForce
                 * (1.0f - (hit.distance / m_hoverHeight)), 
                                         hoverPoint.transform.position);
             else
             {
             if (transform.position.y > hoverPoint.transform.position.y)
-                m_body.AddForceAtPosition(
+                rb.AddForceAtPosition(
                 hoverPoint.transform.up * m_hoverForce,
                 hoverPoint.transform.position);
             else
-                m_body.AddForceAtPosition(
+                rb.AddForceAtPosition(
                 hoverPoint.transform.up * -m_hoverForce,
                 hoverPoint.transform.position);
             }
@@ -96,25 +107,13 @@ public class HoverCarControl : MonoBehaviour
 
         // Forward
         if (Mathf.Abs(m_currThrust) > 0)
-            m_body.AddForce(transform.forward * m_currThrust);
+            rb.AddForce(transform.forward * m_currThrust);
 
         // Turn
         if (m_currTurn > 0) {
-            m_body.AddRelativeTorque(Vector3.up * m_currTurn * m_turnStrength);
+            rb.AddRelativeTorque(Vector3.up * m_currTurn * m_turnStrength);
         } else if (m_currTurn < 0) {
-            m_body.AddRelativeTorque(Vector3.up * m_currTurn * m_turnStrength);
+            rb.AddRelativeTorque(Vector3.up * m_currTurn * m_turnStrength);
         }
-    }
-
-	private void OnTriggerEnter(Collider other) {
-        if (other.gameObject.CompareTag("DeadTrigger")) {
-            transform.position = spawnPoint.position;
-
-            Rigidbody rb = GetComponent<Rigidbody>();
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        } else if (other.gameObject.CompareTag("DestinationPoint")) {
-            Debug.Log("Med-kit delivered!");
-		}
     }
 }
